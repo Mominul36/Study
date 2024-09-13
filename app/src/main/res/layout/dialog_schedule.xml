@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose an option"
+        android:textSize="18sp"
+        android:paddingBottom="16dp"
+        android:gravity="center"
+        android:textColor="@android:color/black" />
+
+    <Button
+        android:id="@+id/ct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Class Test"
+        style="@style/CustomButton"
+        />
+
+    <Button
+        android:id="@+id/assignment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Assignment"
+        android:layout_marginTop="16dp"
+        style="@style/CustomButton"
+
+        />
+</LinearLayout>
