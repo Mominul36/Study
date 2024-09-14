@@ -3,37 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-
     app:startDestination="@id/CTHomeFragment">
 
     <fragment
         android:id="@+id/CTHomeFragment"
         android:name="com.example.studyadmin.Fragments.CTHomeFragment"
         android:label="fragment_c_t_home"
-        tools:layout="@layout/fragment_c_t_home" >
+        tools:layout="@layout/fragment_c_t_home">
         <action
             android:id="@+id/action_CTHomeFragment_to_CTAddFragment"
             app:destination="@id/CTAddFragment" />
         <action
             android:id="@+id/action_CTHomeFragment_to_CTUpdateFragment"
-            app:destination="@id/CTUpdateFragment" />
+            app:destination="@id/CTUpdateFragment">
+            <!-- Declare the argument you want to pass -->
+            <argument
+                android:name="classTestId"
+                app:argType="string"
+                app:nullable="true"/>
+        </action>
     </fragment>
+
     <fragment
         android:id="@+id/CTAddFragment"
         android:name="com.example.studyadmin.Fragments.CTAddFragment"
         android:label="fragment_c_t_add"
-        tools:layout="@layout/fragment_c_t_add" >
+        tools:layout="@layout/fragment_c_t_add">
         <action
             android:id="@+id/action_CTAddFragment_to_CTHomeFragment"
             app:destination="@id/CTHomeFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/CTUpdateFragment"
         android:name="com.example.studyadmin.Fragments.CTUpdateFragment"
         android:label="fragment_c_t_update"
-        tools:layout="@layout/fragment_c_t_update" >
+        tools:layout="@layout/fragment_c_t_update">
+        <argument
+            android:name="classTestId"
+            app:argType="string" /> <!-- Argument in CTUpdateFragment -->
         <action
             android:id="@+id/action_CTUpdateFragment_to_CTHomeFragment"
             app:destination="@id/CTHomeFragment" />
     </fragment>
+
 </navigation>

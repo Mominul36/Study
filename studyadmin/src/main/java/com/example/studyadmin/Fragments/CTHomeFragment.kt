@@ -54,16 +54,20 @@ class CTHomeFragment : Fragment() {
         binding.ctRecyclerView.setHasFixedSize(true)
 
         classTestList = ArrayList()
-        adapter = ClassTestAdapter(classTestList,
+        adapter = ClassTestAdapter(
+            classTestList,
             onDeleteClick = { classTest ->
-                // Handle delete operation
                 deleteClassTest(classTest)
-            })
+            },
+            onItemClick = { classTest ->
+                // Navigate to the update fragment with classTest ID
+                val action = CTHomeFragmentDirections
+                    .actionCTHomeFragmentToCTUpdateFragment(classTest.id)
+
+                view?.findNavController()?.navigate(action)
+            }
+        )
         binding.ctRecyclerView.adapter = adapter
-
-
-
-
 
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -74,14 +78,26 @@ class CTHomeFragment : Fragment() {
                         classTestList.add(user)
                     }
                 }
-                adapter.notifyDataSetChanged() // Notify the adapter to update the RecyclerView
+                adapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
-
+                // Handle error
             }
         })
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     private fun deleteClassTest(classTest: ClassTest) {
         classTest.id?.let { id ->
