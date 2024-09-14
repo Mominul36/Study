@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Study"
 include(":app")
+include(":studyadmin")

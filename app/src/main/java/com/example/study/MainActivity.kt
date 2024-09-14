@@ -1,5 +1,6 @@
 package com.example.study
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
@@ -81,18 +82,18 @@ class MainActivity : AppCompatActivity() {
         val dialog = dialogBuilder.create()
         dialog.show()
 
-        val btnOptionOne = dialogView.findViewById<Button>(R.id.ct)
-        val btnOptionTwo = dialogView.findViewById<Button>(R.id.assignment)
+        val ct = dialogView.findViewById<Button>(R.id.ct)
+        val assignment = dialogView.findViewById<Button>(R.id.assignment)
 
-        btnOptionOne.setOnClickListener {
-//            val intent = Intent(this, ActivityOne::class.java)
-//            startActivity(intent)
+        ct.setOnClickListener {
+            val intent = Intent(this, ClassTestActivity::class.java)
+            startActivity(intent)
             dialog.dismiss()
         }
 
-        btnOptionTwo.setOnClickListener {
-//            val intent = Intent(this, ActivityTwo::class.java)
-//            startActivity(intent)
+        assignment.setOnClickListener {
+            val intent = Intent(this, AssignmentActivity::class.java)
+            startActivity(intent)
             dialog.dismiss()
         }
     }
