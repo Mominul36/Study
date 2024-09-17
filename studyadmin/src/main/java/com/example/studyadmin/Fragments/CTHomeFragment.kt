@@ -5,10 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studyadmin.Adapters.ClassTestAdapter
+import com.example.studyadmin.Internet.InternetCheck
 import com.example.studyadmin.Model.ClassTest
 import com.example.studyadmin.R
 import com.example.studyadmin.databinding.FragmentCTHomeBinding
@@ -24,6 +26,7 @@ class CTHomeFragment : Fragment() {
     private lateinit var classTestList: ArrayList<ClassTest>
     private lateinit var adapter: ClassTestAdapter
     private lateinit var database: DatabaseReference
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,6 +34,10 @@ class CTHomeFragment : Fragment() {
 
         binding = FragmentCTHomeBinding.inflate(inflater, container, false)
         database = FirebaseDatabase.getInstance().getReference("Class_Test")
+
+
+        binding.pb.visibility = View.VISIBLE
+
 
         showAllClassTest()
 
@@ -57,7 +64,12 @@ class CTHomeFragment : Fragment() {
         adapter = ClassTestAdapter(
             classTestList,
             onDeleteClick = { classTest ->
-                deleteClassTest(classTest)
+                if(InternetCheck().isInternetAvailable(requireContext())){
+                    deleteClassTest(classTest)
+                }else{
+                    Toast.makeText(requireContext(),"Internet not available",Toast.LENGTH_LONG).show()
+                }
+
             },
             onItemClick = { classTest ->
                 // Navigate to the update fragment with classTest ID
@@ -79,10 +91,12 @@ class CTHomeFragment : Fragment() {
                     }
                 }
                 adapter.notifyDataSetChanged()
+
+                binding.pb.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error
+                binding.pb.visibility = View.GONE
             }
         })
     }

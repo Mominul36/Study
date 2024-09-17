@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,12 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Study">
         <activity
+            android:name=".LabReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AssignmentActivity"
+            android:exported="false" />
+        <activity
             android:name=".ClassTestActivity"
-            android:exported="true">
-
-
-
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

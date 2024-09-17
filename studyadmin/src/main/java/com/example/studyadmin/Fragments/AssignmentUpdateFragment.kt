@@ -1,7 +1,6 @@
 package com.example.studyadmin.Fragments
 
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,74 +8,68 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TimePicker
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.studyadmin.Internet.InternetCheck
-import com.example.studyadmin.Model.ClassTest
-
-import com.example.studyadmin.databinding.FragmentCTUpdateBinding
+import com.example.studyadmin.databinding.FragmentAssignmentUpdateBinding
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.util.Calendar
 
 
-class CTUpdateFragment : Fragment() {
-    private lateinit var binding: FragmentCTUpdateBinding
-    private lateinit var database: DatabaseReference
-    private var classTestId: String? = null
-
+class AssignmentUpdateFragment : Fragment() {
+    lateinit var binding: FragmentAssignmentUpdateBinding
     lateinit var courseCodeList : ArrayList<String>
+    lateinit var assignmentNoList : ArrayList<String>
     lateinit var courseNameList : ArrayList<String>
-    lateinit var ctNoList : ArrayList<String>
     var selectedDate : String?=null
-    var selectedTime : String?=null
-     var selectedCourseCode : String?=null
-     var selectedCourseName : String?=null
-     var topic : String?=null
-    lateinit var selectedCtNo: String
+    lateinit var selectedCourseCode : String
+    lateinit var selectedCourseName : String
+    lateinit var topic : String
+    lateinit var additional : String
+    lateinit var selectedAssignmentNo: String
+    lateinit var database: DatabaseReference
 
+
+    private var assignmentId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentAssignmentUpdateBinding.inflate(inflater, container, false)
+        database = FirebaseDatabase.getInstance().getReference("Assignment")
+        assignmentId = arguments?.getString("assignmentId")
 
-        binding = FragmentCTUpdateBinding.inflate(inflater, container, false)
-        database = FirebaseDatabase.getInstance().getReference("Class_Test")
-        classTestId = arguments?.getString("classTestId")
 
         initVariable()
+
         binding.date.setOnClickListener{
             showDateDialog()
-        }
-
-        binding.time.setOnClickListener{
-            showTimeDialog()
         }
 
         binding.update.setOnClickListener{
             if(InternetCheck().isInternetAvailable(requireContext())){
                 updateData()
             }else{
-                Toast.makeText(requireContext(),"Internet not available",Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Internet not available", Toast.LENGTH_LONG).show()
             }
 
         }
 
 
-        database.child(classTestId!!).get().addOnSuccessListener {
+        database.child(assignmentId!!).get().addOnSuccessListener {
             if(it.exists()){
                 selectedCourseCode = it.child("courseCode").value.toString()
                 selectedCourseName = it.child("courseName").value.toString()
                 selectedDate = it.child("date").value.toString()
-                selectedTime = it.child("time").value.toString()
+                additional = it.child("additional").value.toString()
                 topic = it.child("topic").value.toString()
-                selectedCtNo = it.child("ctno").value.toString()
+                selectedAssignmentNo = it.child("assignmentNo").value.toString()
 
 
                 setUpForCourseListSpinner()
-                setUpForCtNoListSpinner()
+                setUpForAssignmentNoListSpinner()
                 setAnotherValue()
 
             }
@@ -85,57 +78,31 @@ class CTUpdateFragment : Fragment() {
 
 
 
-
-    return binding.root
+        return binding.root
     }
-
-
-
-    private fun updateData() {
-        topic = binding.topic.text.toString()
-
-        val classTest = mapOf<String,String>(
-            "courseCode" to selectedCourseCode.toString(),
-            "courseName" to selectedCourseName.toString(),
-            "date" to selectedDate.toString(),
-            "time" to selectedTime.toString(),
-            "topic" to topic.toString(),
-            "ctno" to selectedCtNo.toString()
-        )
-        database.child(classTestId!!).updateChildren(classTest).addOnSuccessListener {
-            Toast.makeText(context,"Class Test updated successfully",Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
-        }.addOnFailureListener {
-            Toast.makeText(context, "Failed to update Class Test", Toast.LENGTH_SHORT).show()
-        }
-
-
-    }
-
 
     private fun setAnotherValue() {
-       binding.date.text = selectedDate
-        binding.time.text = selectedTime
+        binding.date.text = selectedDate
+        binding.additional.setText(additional)
         binding.topic.setText(topic)
     }
 
-
-    private fun setUpForCtNoListSpinner() {
+    private fun setUpForAssignmentNoListSpinner() {
         val dataAdapter2 = ArrayAdapter(
             requireContext(),
             androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-            ctNoList
+            assignmentNoList
         )
-        binding.ctno.adapter = dataAdapter2
+        binding.assignmentno.adapter = dataAdapter2
 
-        if(selectedCtNo!=null){
-            val spinnerPosition2 = dataAdapter2.getPosition(selectedCtNo)
-            binding.ctno.setSelection(spinnerPosition2)
+        if(selectedAssignmentNo!=null){
+            val spinnerPosition2 = dataAdapter2.getPosition(selectedAssignmentNo)
+            binding.assignmentno.setSelection(spinnerPosition2)
         }
 
-        binding.ctno.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.assignmentno.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                selectedCtNo = ctNoList[p2]
+                selectedAssignmentNo = assignmentNoList[p2]
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
 
@@ -143,7 +110,6 @@ class CTUpdateFragment : Fragment() {
 
         }
     }
-
 
     private fun setUpForCourseListSpinner() {
         val dataAdapter = ArrayAdapter(
@@ -153,10 +119,10 @@ class CTUpdateFragment : Fragment() {
         )
         binding.courseCode.adapter = dataAdapter
 
-      if(selectedCourseCode!=null){
-          val spinnerPosition = dataAdapter.getPosition(selectedCourseCode)
-          binding.courseCode.setSelection(spinnerPosition)
-      }
+        if(selectedCourseCode!=null){
+            val spinnerPosition = dataAdapter.getPosition(selectedCourseCode)
+            binding.courseCode.setSelection(spinnerPosition)
+        }
 
 
 
@@ -175,21 +141,24 @@ class CTUpdateFragment : Fragment() {
         }
     }
 
+    private fun updateData() {
+        topic = binding.topic.text.toString()
+        additional = binding.additional.text.toString()
 
-    private fun showTimeDialog() {
-        // Get current time
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
-
-        // Create a TimePickerDialog
-        val timePickerDialog = TimePickerDialog(requireContext(), { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
-            // Format and display the selected time
-            selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-            binding.time.text = selectedTime
-        }, hour, minute, true)
-
-        timePickerDialog.show()
+        val assignment = mapOf<String,String>(
+            "courseCode" to selectedCourseCode.toString(),
+            "courseName" to selectedCourseName.toString(),
+            "date" to selectedDate.toString(),
+            "additional" to additional.toString(),
+            "topic" to topic.toString(),
+            "assignmentNo" to selectedAssignmentNo.toString()
+        )
+        database.child(assignmentId!!).updateChildren(assignment).addOnSuccessListener {
+            Toast.makeText(context,"Assignment updated successfully",Toast.LENGTH_SHORT).show()
+            findNavController().navigateUp()
+        }.addOnFailureListener {
+            Toast.makeText(context, "Failed to update Assignment", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showDateDialog() {
@@ -219,6 +188,11 @@ class CTUpdateFragment : Fragment() {
         courseNameList.add("Compiler")
         courseNameList.add("Basic Mechanical Engineering ")
 
+        courseNameList.add("Software Development Project II")
+        courseNameList.add("Software Engineering Sessional")
+        courseNameList.add("Microprocessors, Microcontrollers and Embedded Systems Sessional")
+        courseNameList.add("Compiler Sessional")
+
 
 
 
@@ -232,15 +206,16 @@ class CTUpdateFragment : Fragment() {
         courseCodeList.add("ME 3181")
 
 
+        courseCodeList.add("CSE 3100")
+        courseCodeList.add("CSE 3102")
+        courseCodeList.add("CSE 3104")
+        courseCodeList.add("CSE 3110")
+
 
         //init ctno
-        ctNoList = arrayListOf()
-        ctNoList.add("CT-1")
-        ctNoList.add("CT-2")
-        ctNoList.add("CT-3")
-        ctNoList.add("CT-4")
-
-
+        assignmentNoList = arrayListOf()
+        assignmentNoList.add("Assignment-1")
+        assignmentNoList.add("Assignment-2")
     }
 
 

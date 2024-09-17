@@ -5,10 +5,16 @@ buildscript {
         google()
     }
     dependencies {
+        //For Navigation Component
         val navVersion = "2.7.3"
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$navVersion")
-
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.8.0")
+
+
+        //For Firebase Notification
+        // Add the Google services classpath
+        classpath("com.google.gms:google-services:4.4.2")
+
     }
 }
 

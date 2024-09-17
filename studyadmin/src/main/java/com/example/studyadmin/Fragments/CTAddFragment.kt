@@ -20,17 +20,20 @@ import com.google.firebase.database.FirebaseDatabase
 import java.util.Calendar
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.studyadmin.Internet.InternetCheck
 
 
 class CTAddFragment : Fragment() {
     lateinit var binding : FragmentCTAddBinding
     lateinit var courseCodeList : ArrayList<String>
+    lateinit var ctNoList : ArrayList<String>
     lateinit var courseNameList : ArrayList<String>
      var selectedDate : String?=null
      var selectedTime : String?=null
     lateinit var selectedCourseCode : String
     lateinit var selectedCourseName : String
     lateinit var topic : String
+    lateinit var selectedCtNo: String
     lateinit var database: DatabaseReference
 
 
@@ -44,6 +47,9 @@ class CTAddFragment : Fragment() {
 
         initVariable()
         showCourseList()
+        showCtNoList()
+
+        binding.pb.visibility = View.VISIBLE
 
         binding.date.setOnClickListener{
             showDateDialog()
@@ -54,12 +60,23 @@ class CTAddFragment : Fragment() {
         }
 
         binding.add.setOnClickListener{
-            saveData()
+
+            if(InternetCheck().isInternetAvailable(requireContext())){
+                saveData()
+            }else{
+                Toast.makeText(requireContext(),"Internet not available",Toast.LENGTH_LONG).show()
+            }
+
+
         }
+
+
 
 
         return binding.root
     }
+
+
 
     private fun saveData() {
         if(selectedDate==null){
@@ -69,15 +86,19 @@ class CTAddFragment : Fragment() {
             Toast.makeText(context,"Select Time",Toast.LENGTH_LONG).show()
         }
         else{
+
+             showProgressBar()
+
             var id = database.push()!!.key!!
             topic = binding.topic.text.toString()
-            var classTest = ClassTest(id,selectedCourseCode,selectedCourseName,selectedDate,selectedTime,topic)
+            var classTest = ClassTest(id,selectedCourseCode,selectedCourseName,selectedDate,selectedTime,topic,selectedCtNo)
 
             database.child(id).setValue(classTest).addOnSuccessListener {
                 Toast.makeText(context,"Class Test added successfully",Toast.LENGTH_SHORT).show()
-               // it.findNavController().navigate(R.id.action_CTAddFragment_to_CTHomeFragment)
+                hideProgressBar()
                 findNavController().navigateUp()
             }.addOnFailureListener{
+                hideProgressBar()
                 Toast.makeText(context,"Failed to add Class Test",Toast.LENGTH_SHORT).show()
             }
 
@@ -86,6 +107,35 @@ class CTAddFragment : Fragment() {
 
     }
 
+    private fun hideProgressBar() {
+        binding.addlinearlayout.visibility = View.VISIBLE
+        binding.pb.visibility = View.GONE
+    }
+
+    private fun showProgressBar() {
+        binding.addlinearlayout.visibility = View.GONE
+        binding.pb.visibility = View.VISIBLE
+    }
+
+
+    private fun showCtNoList() {
+        val dataAdapter2 = ArrayAdapter(
+            requireContext(),
+            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+            ctNoList
+        )
+        binding.ctno.adapter = dataAdapter2
+
+        binding.ctno.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                selectedCtNo = ctNoList[p2]
+            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+
+        }
+    }
 
     private fun showCourseList(){
         val dataAdapter = ArrayAdapter(
@@ -129,6 +179,14 @@ class CTAddFragment : Fragment() {
         courseCodeList.add("CSE 3107")
         courseCodeList.add("CSE 3109")
         courseCodeList.add("ME 3181")
+
+
+        //init ctno
+        ctNoList = arrayListOf()
+        ctNoList.add("CT-1")
+        ctNoList.add("CT-2")
+        ctNoList.add("CT-3")
+        ctNoList.add("CT-4")
 
 
     }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_assignment"
+    app:startDestination="@id/assignmentHomeFragment">
+
+    <fragment
+        android:id="@+id/assignmentHomeFragment"
+        android:name="com.example.studyadmin.Fragments.AssignmentHomeFragment"
+        android:label="fragment_assignment_home"
+        tools:layout="@layout/fragment_assignment_home" >
+        <action
+            android:id="@+id/action_assignmentHomeFragment_to_assignmentAddFragment"
+            app:destination="@id/assignmentAddFragment" />
+        <action
+            android:id="@+id/action_assignmentHomeFragment_to_assignmentUpdateFragment"
+            app:destination="@id/assignmentUpdateFragment" >
+            <!-- Declare the argument you want to pass -->
+            <argument
+                android:name="assignmentId"
+                app:argType="string"
+                app:nullable="true"/>
+
+
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/assignmentAddFragment"
+        android:name="com.example.studyadmin.Fragments.AssignmentAddFragment"
+        android:label="fragment_assignment_add"
+        tools:layout="@layout/fragment_assignment_add" >
+        <action
+            android:id="@+id/action_assignmentAddFragment_to_assignmentHomeFragment"
+            app:destination="@id/assignmentHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/assignmentUpdateFragment"
+        android:name="com.example.studyadmin.Fragments.AssignmentUpdateFragment"
+        android:label="fragment_assignment_update"
+        tools:layout="@layout/fragment_assignment_update" >
+
+        <argument
+            android:name="assignmentId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_assignmentUpdateFragment_to_assignmentHomeFragment"
+            app:destination="@id/assignmentHomeFragment" />
+    </fragment>
+</navigation>
